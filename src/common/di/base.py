@@ -14,4 +14,5 @@ def inject[T, **P](func: Callable[P, T]) -> Callable[P, T]:
         func=func,
         container_getter=container_getter,
         is_async=True,
+        manage_scope=True,
     )

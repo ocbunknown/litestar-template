@@ -20,7 +20,7 @@ from src.core.settings import Settings
 from src.database import create_database_factory
 from src.database.core.connection import create_sa_engine, create_sa_session_factory
 from src.database.core.manager import TransactionManager
-from src.services import ServiceGateway
+from src.services import ServiceFactory
 from src.services.cache.redis import RedisCache, get_redis
 from src.services.external import ExternalServiceGateway
 from src.services.internal import InternalServiceGateway
@@ -47,7 +47,7 @@ def setup_dependencies(settings: Settings) -> State:
     jwt = JWT(settings.ciphers)
 
     aiohttp_provider = AiohttpProvider()
-    service_gateway = ServiceGateway(
+    service_factory = ServiceFactory(
         database_factory=database_factory,
         provider=aiohttp_provider,
         settings=settings,
@@ -71,8 +71,8 @@ def setup_dependencies(settings: Settings) -> State:
             jwt=jwt,
             settings=settings,
             event_bus=event_bus,
-            external_gateway=service_gateway.external,
-            internal_gateway=service_gateway.internal,
+            external_gateway=service_factory.external(),
+            internal_gateway=service_factory.internal(),
         )
         .handlers(setup_handlers)
         .middleware()
@@ -90,11 +90,11 @@ def setup_dependencies(settings: Settings) -> State:
     provider.provide(singleton(jwt), provides=JWT)
     provider.provide(singleton(hasher), provides=AbstractHasher)
     provider.provide(
-        singleton(service_gateway.internal), provides=InternalServiceGateway
+        service_factory.internal(),
+        provides=InternalServiceGateway,
+        scope=Scope.REQUEST,
     )
-    provider.provide(
-        singleton(service_gateway.external), provides=ExternalServiceGateway
-    )
+    provider.provide(service_factory.external, provides=ExternalServiceGateway)
 
     container.add_providers(provider, LitestarProvider())
 

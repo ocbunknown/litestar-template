@@ -65,9 +65,11 @@ class AuthenticationMiddleware(AbstractAuthenticationMiddleware):
         user_uuid: uuid.UUID,
         internal_gateway: Depends[InternalServiceGateway] = FromDepends(),
     ) -> dtos.User:
-        user: dtos.User = await internal_gateway.user.select(
-            "role", user_uuid=user_uuid
-        )
+        async with internal_gateway.database.manager.session:
+            user: dtos.User = await internal_gateway.user.select(
+                "role", user_uuid=user_uuid
+            )
+
         if not user.active:
             raise ForbiddenError("You have been blocked")
         if not user.role:

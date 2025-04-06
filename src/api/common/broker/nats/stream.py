@@ -1,6 +1,6 @@
 from typing import Any
 
-import orjson
+import msgspec
 
 from nats.js.api import StreamConfig
 from nats.js.errors import NotFoundError
@@ -15,7 +15,7 @@ def load_stream_config() -> list[dict[str, Any]]:
     stream_path = path("jetstream", "stream.json")
     if not stream_path:
         raise FileNotFoundError(f"Config file {stream_path} not found")
-    config = orjson.loads(open_file_sync(stream_path, mode="r"))
+    config = msgspec.json.decode(open_file_sync(stream_path, mode="r"))
     return list(config.get("streams", []))
 
 

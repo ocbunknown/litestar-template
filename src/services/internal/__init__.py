@@ -36,4 +36,4 @@ class InternalServiceGateway(BaseGateway):
         return cached
 
 
-__all__ = ("InternalServiceGateway",)
+__all__ = "InternalServiceGateway"
