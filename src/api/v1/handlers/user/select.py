@@ -19,7 +19,7 @@ class SelectUserHandler(Handler[SelectUserQuery, dtos.User]):
     internal_gateway: InternalServiceGateway
 
     async def __call__(self, query: SelectUserQuery) -> dtos.User:
-        async with self.internal_gateway:
+        async with self.internal_gateway.database.manager.session:
             return await self.internal_gateway.user.select(
                 *query.loads,
                 user_uuid=query.user_uuid,

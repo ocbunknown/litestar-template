@@ -11,4 +11,4 @@ class Handler[Q: DTO, R: DTO](abc.ABC):
     async def __call__(self, query: Q) -> R: ...
 
 
-HandlerType = Handler[Any, Any]
+type HandlerType = Handler[Any, Any]
