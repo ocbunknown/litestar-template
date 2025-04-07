@@ -22,7 +22,7 @@ class NatsBroker(Broker[NatsEvent, NatsMessage]):
             subject=event.subject,
             payload=event.as_bytes(
                 exclude={
-                    "_subject",
+                    "subject",
                     "_reply",
                     "_headers",
                 },

@@ -27,7 +27,7 @@ class UserController(Controller):
             Parameter(
                 required=False,
                 default=(),
-                description="Search for additional user relation",
+                description="Search for additional relations",
             ),
         ],
         request: Request[dtos.User, None, State],

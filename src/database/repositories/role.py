@@ -1,3 +1,4 @@
+from collections.abc import Sequence
 from typing import Any, Optional, Unpack
 
 import uuid_utils.compat as uuid
@@ -12,7 +13,7 @@ from src.database.repositories.types.role import (
     RoleLoads,
 )
 from src.database.tools import select_with_relationships
-from src.database.types import OffsetPaginationResult, OrderBy
+from src.database.types import OrderBy
 
 
 class RoleRepository(BaseRepository[models.Role]):
@@ -51,7 +52,7 @@ class RoleRepository(BaseRepository[models.Role]):
         order_by: OrderBy,
         offset: int = 0,
         limit: int = 10,
-    ) -> OffsetPaginationResult[models.Role]:
+    ) -> tuple[int, Sequence[models.Role]]:
         where_clauses: list[ColumnExpressionArgument[bool]] = []
         order_by_clauses: list[UnaryExpression[Any]] = []
 
@@ -60,9 +61,9 @@ class RoleRepository(BaseRepository[models.Role]):
         if order_by:
             order_by_clauses.append(getattr(self.model.created_at, order_by)())
 
-        count = await self._crud.count(*where_clauses)
-        if count <= 0:
-            return OffsetPaginationResult(data=[], limit=limit, offset=offset, total=0)
+        total = await self._crud.count(*where_clauses)
+        if total <= 0:
+            return total, []
 
         stmt = (
             select_with_relationships(*loads, model=self.model)
@@ -72,10 +73,8 @@ class RoleRepository(BaseRepository[models.Role]):
             .offset(offset)
         )
 
-        roles = (await self._session.scalars(stmt)).unique().all()
-        return OffsetPaginationResult(
-            data=roles, limit=limit, offset=offset, total=count
-        )
+        results = (await self._session.scalars(stmt)).unique().all()
+        return total, results
 
     async def exists(self, name: str) -> bool:
         return await self._crud.exists(self.model.name == name)

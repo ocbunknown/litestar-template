@@ -24,8 +24,8 @@ class AuthController(Controller):
     async def login_endpoint(
         self,
         data: handlers.auth.LoginQuery,
-        mediator: Depends[Mediator],
         settings: Depends[Settings],
+        mediator: Depends[Mediator],
     ) -> Response[dtos.Token]:
         result: dtos.TokensExpire = await mediator.send(data)
         response = Response(dtos.Token(token=result.tokens.access))
@@ -65,8 +65,8 @@ class AuthController(Controller):
     async def register_confirm_endpoint(
         self,
         data: handlers.auth.ConfirmRegisterQuery,
-        mediator: Depends[Mediator],
         settings: Depends[Settings],
+        mediator: Depends[Mediator],
     ) -> Response[dtos.Token]:
         result: dtos.TokensExpire = await mediator.send(data)
         response = Response(dtos.Token(token=result.tokens.access))
@@ -92,8 +92,8 @@ class AuthController(Controller):
         self,
         data: dtos.Fingerprint,
         request: Request[None, None, State],
-        mediator: Depends[Mediator],
         settings: Depends[Settings],
+        mediator: Depends[Mediator],
     ) -> Response[dtos.Token]:
         result: dtos.TokensExpire = await mediator.send(
             handlers.auth.RefreshTokenQuery(

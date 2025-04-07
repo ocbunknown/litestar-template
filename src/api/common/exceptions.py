@@ -2,7 +2,6 @@ import traceback
 from functools import partial
 from typing import Any, Callable
 
-import msgspec
 from litestar import MediaType, Request, Response
 from litestar import status_codes as status
 from litestar.exceptions import ValidationException
@@ -28,7 +27,7 @@ def setup_exception_handlers() -> ExceptionHandlersMap:
         exc.BadRequestError: error_handler(status.HTTP_400_BAD_REQUEST),
         exc.ServiceUnavailableError: error_handler(status.HTTP_503_SERVICE_UNAVAILABLE),
         exc.BadGatewayError: error_handler(status.HTTP_502_BAD_GATEWAY),
-        msgspec.ValidationError: error_handler(status.HTTP_400_BAD_REQUEST),
+        ValidationException: error_handler(status.HTTP_400_BAD_REQUEST),
         Exception: error_handler(status.HTTP_500_INTERNAL_SERVER_ERROR),
     }
 

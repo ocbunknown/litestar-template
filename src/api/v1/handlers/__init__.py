@@ -11,4 +11,5 @@ def setup_handlers(mediator: MediatorImpl) -> None:
     mediator.register(auth.ConfirmRegisterQuery, auth.ConfirmRegisterHandler)
     mediator.register(user.CreateUserQuery, user.CreateUserHandler)
     mediator.register(user.SelectUserQuery, user.SelectUserHandler)
+    mediator.register(user.SelectManyUserQuery, user.SelectManyUserHandler)
     mediator.register(user.UpdateUserQuery, user.UpdateUserHandler)

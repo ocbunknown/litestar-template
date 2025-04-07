@@ -1,3 +1,4 @@
+from collections.abc import Sequence
 from typing import Any, Optional, Unpack
 
 import uuid_utils.compat as uuid
@@ -12,7 +13,7 @@ from src.database.repositories.types.user import (
     UserLoads,
 )
 from src.database.tools import select_with_relationships
-from src.database.types import OffsetPaginationResult, OrderBy
+from src.database.types import OrderBy
 
 
 class UserRepository(BaseRepository[models.User]):
@@ -80,23 +81,20 @@ class UserRepository(BaseRepository[models.User]):
         order_by: OrderBy,
         offset: int = 0,
         limit: int = 10,
-    ) -> OffsetPaginationResult[models.User]:
+    ) -> tuple[int, Sequence[models.User]]:
         where_clauses: list[ColumnExpressionArgument[bool]] = []
         order_by_clauses: list[UnaryExpression[Any]] = []
 
         if login:
-            where_clauses.append(
-                self.model.login.ilike(f"%{login}%")
-                | self.model.login.ilike(f"%{login}%")
-            )
+            where_clauses.append(self.model.login.ilike(f"%{login}%"))
         if role_uuid:
             where_clauses.append(self.model.role_uuid == role_uuid)
         if order_by:
             order_by_clauses.append(getattr(self.model.created_at, order_by)())
 
-        count = await self._crud.count(*where_clauses)
-        if count <= 0:
-            return OffsetPaginationResult(data=[], limit=limit, offset=offset, total=0)
+        total = await self._crud.count(*where_clauses)
+        if total <= 0:
+            return total, []
 
         stmt = (
             select_with_relationships(*loads, model=self.model)
@@ -106,10 +104,8 @@ class UserRepository(BaseRepository[models.User]):
             .offset(offset)
         )
 
-        users = (await self._session.scalars(stmt)).unique().all()
-        return OffsetPaginationResult(
-            data=users, limit=limit, offset=offset, total=count
-        )
+        results = (await self._session.scalars(stmt)).unique().all()
+        return total, results
 
     async def exists(self, login: str) -> bool:
         return await self._crud.exists(self.model.login == login)

@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import re
 
 from .auth import Fingerprint, Login, Register, VerificationCode
@@ -36,7 +34,7 @@ EMAIL_REGEX = re.compile(r"^[^@]+@[^@]+\.[^@]+$")
 
 
 class EmailStr(str):
-    def __new__(cls, value: str) -> EmailStr:
+    def __new__(cls, value: str) -> "EmailStr":
         if not EMAIL_REGEX.fullmatch(value):
             raise ValueError(f"Invalid email: {value}")
         return super().__new__(cls, value)

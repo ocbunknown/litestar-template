@@ -1,4 +1,3 @@
-from dataclasses import asdict
 from typing import Optional, Unpack
 
 import uuid_utils.compat as uuid
@@ -74,7 +73,7 @@ class UserService:
         offset: int = 0,
         limit: int = 10,
     ) -> dtos.OffsetResult[dtos.User]:
-        result = await self._repository.select_many(
+        total, results = await self._repository.select_many(
             *loads,
             login=login,
             role_uuid=role_uuid,
@@ -82,8 +81,12 @@ class UserService:
             offset=offset,
             limit=limit,
         )
-
-        return dtos.OffsetResult[dtos.User].from_mapping(asdict(result))
+        return dtos.OffsetResult[dtos.User](
+            data=[dtos.User.from_mapping(result.as_dict()) for result in results],
+            limit=limit,
+            offset=offset,
+            total=total,
+        )
 
     async def exists(self, login: str) -> bool:
         return await self._repository.exists(login)
