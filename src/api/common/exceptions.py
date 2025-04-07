@@ -4,7 +4,7 @@ from typing import Any, Callable
 
 from litestar import MediaType, Request, Response
 from litestar import status_codes as status
-from litestar.exceptions import ValidationException
+from litestar.exceptions import ClientException
 from litestar.types import ExceptionHandlersMap
 from uuid_utils.compat import uuid4
 
@@ -27,7 +27,6 @@ def setup_exception_handlers() -> ExceptionHandlersMap:
         exc.BadRequestError: error_handler(status.HTTP_400_BAD_REQUEST),
         exc.ServiceUnavailableError: error_handler(status.HTTP_503_SERVICE_UNAVAILABLE),
         exc.BadGatewayError: error_handler(status.HTTP_502_BAD_GATEWAY),
-        ValidationException: error_handler(status.HTTP_400_BAD_REQUEST),
         Exception: error_handler(status.HTTP_500_INTERNAL_SERVER_ERROR),
     }
 
@@ -73,14 +72,14 @@ def handle_error(
             media_type=MediaType.JSON,
         )
 
-    if isinstance(exception, ValidationException):
+    if isinstance(exception, ClientException):
         return JsonResponse(
             content={
-                "message": "Validation Error",
+                "message": type(exception).__name__,
                 "details": exception.detail,
                 "ticket": ticket,
             },
-            status_code=status_code,
+            status_code=exception.status_code,
             media_type=MediaType.JSON,
         )
 
