@@ -69,7 +69,7 @@ class UserService:
         *loads: UserLoads,
         login: str | None = None,
         role_uuid: uuid.UUID | None = None,
-        order_by: OrderBy,
+        order_by: OrderBy = "desc",
         offset: int = 0,
         limit: int = 10,
     ) -> dtos.OffsetResult[dtos.User]:

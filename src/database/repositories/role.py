@@ -49,7 +49,7 @@ class RoleRepository(BaseRepository[models.Role]):
         self,
         *loads: RoleLoads,
         name: Optional[str] = None,
-        order_by: OrderBy,
+        order_by: OrderBy = "desc",
         offset: int = 0,
         limit: int = 10,
     ) -> tuple[int, Sequence[models.Role]]:

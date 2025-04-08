@@ -42,7 +42,7 @@ class RoleService:
         self,
         *loads: RoleLoads,
         name: str | None = None,
-        order_by: OrderBy,
+        order_by: OrderBy = "desc",
         offset: int = 0,
         limit: int = 10,
     ) -> dtos.OffsetResult[dtos.Role]:

@@ -78,7 +78,7 @@ class UserRepository(BaseRepository[models.User]):
         *loads: UserLoads,
         login: Optional[str] = None,
         role_uuid: Optional[uuid.UUID] = None,
-        order_by: OrderBy,
+        order_by: OrderBy = "desc",
         offset: int = 0,
         limit: int = 10,
     ) -> tuple[int, Sequence[models.User]]:
