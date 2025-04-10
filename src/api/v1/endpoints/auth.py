@@ -1,4 +1,3 @@
-from dishka.integrations.litestar import inject
 from litestar import Controller, Request, Response, post, status_codes
 from litestar.datastructures import Cookie, State
 from litestar.middleware.rate_limit import RateLimitConfig
@@ -20,7 +19,6 @@ class AuthController(Controller):
         exclude_auth=True,
         middleware=[RateLimitConfig(rate_limit=("minute", 10)).middleware],
     )
-    @inject
     async def login_endpoint(
         self,
         data: handlers.auth.LoginQuery,
@@ -47,7 +45,6 @@ class AuthController(Controller):
         exclude_auth=True,
         middleware=[RateLimitConfig(rate_limit=("minute", 5)).middleware],
     )
-    @inject
     async def register_endpoint(
         self,
         data: handlers.auth.RegisterQuery,
@@ -61,7 +58,6 @@ class AuthController(Controller):
         exclude_auth=True,
         middleware=[RateLimitConfig(rate_limit=("minute", 10)).middleware],
     )
-    @inject
     async def register_confirm_endpoint(
         self,
         data: handlers.auth.ConfirmRegisterQuery,
@@ -87,7 +83,6 @@ class AuthController(Controller):
         status_code=status_codes.HTTP_200_OK,
         exclude_auth=True,
     )
-    @inject
     async def refresh_endpoint(
         self,
         data: dtos.Fingerprint,
@@ -118,7 +113,6 @@ class AuthController(Controller):
         status_code=status_codes.HTTP_200_OK,
         security=[{"BearerToken": []}],
     )
-    @inject
     async def logout_endpoint(
         self,
         request: Request[dtos.User, None, State],

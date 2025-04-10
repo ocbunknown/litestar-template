@@ -13,6 +13,7 @@ from src.api.v1.constants import (
     MIN_PASSWORD_LENGTH,
 )
 from src.api.v1.events.email import SendEmail
+from src.api.v1.tools.validate import validate_email
 from src.common import dtos
 from src.common.exceptions import (
     ConflictError,
@@ -44,7 +45,7 @@ class RegisterQuery(dtos.DTO):
     fingerprint: str
 
     def __post_init__(self) -> None:
-        self.login = str(dtos.EmailStr(self.login))
+        self.login = validate_email(self.login)
 
 
 @dataclass(slots=True)
