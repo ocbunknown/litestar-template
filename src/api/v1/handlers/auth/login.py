@@ -9,6 +9,7 @@ from src.api.v1.constants import (
     MAX_PASSWORD_LENGTH,
     MIN_PASSWORD_LENGTH,
 )
+from src.api.v1.tools.validate import validate_email
 from src.common import dtos
 from src.common.dtos.base import DTO
 from src.common.exceptions import (
@@ -42,7 +43,7 @@ class LoginQuery(DTO):
     fingerprint: str
 
     def __post_init__(self) -> None:
-        self.login = dtos.EmailStr(self.login)
+        self.login = validate_email(self.login)
 
 
 @dataclass(slots=True)

@@ -76,7 +76,7 @@ def handle_error(
         return JsonResponse(
             content={
                 "message": type(exception).__name__,
-                "details": exception.detail,
+                "details": exception.extra,
                 "ticket": ticket,
             },
             status_code=exception.status_code,

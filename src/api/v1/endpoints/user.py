@@ -1,7 +1,12 @@
 from typing import Annotated
 
-from dishka.integrations.litestar import inject
-from litestar import Controller, Request, get, patch, status_codes
+from litestar import (
+    Controller,
+    Request,
+    get,
+    patch,
+    status_codes,
+)
 from litestar.datastructures import State
 from litestar.middleware.rate_limit import RateLimitConfig
 from litestar.params import Parameter
@@ -19,7 +24,6 @@ class UserController(Controller):
     security = [{"BearerToken": []}]
 
     @get("/me", status_code=status_codes.HTTP_200_OK)
-    @inject
     async def select_user_endpoint(
         self,
         s: Annotated[
@@ -41,7 +45,6 @@ class UserController(Controller):
         status_code=status_codes.HTTP_200_OK,
         middleware=[RateLimitConfig(rate_limit=("minute", 5)).middleware],
     )
-    @inject
     async def update_user_endpoint(
         self,
         data: dtos.UpdateUser,

@@ -1,7 +1,6 @@
 from typing import Annotated
 
 import uuid_utils.compat as uuid
-from dishka.integrations.litestar import inject
 from litestar import Controller, get, patch, post, status_codes
 from litestar.params import Parameter
 
@@ -22,7 +21,6 @@ class UserController(Controller):
     security = [{"BearerToken": []}]
 
     @post(status_code=status_codes.HTTP_201_CREATED)
-    @inject
     async def create_user_endpoint(
         self,
         data: handlers.user.CreateUserQuery,
@@ -31,7 +29,6 @@ class UserController(Controller):
         return await mediator.send(data)
 
     @get("/{user_id:uuid}", status_code=status_codes.HTTP_200_OK)
-    @inject
     async def select_user_endpoint(
         self,
         s: Annotated[
@@ -51,7 +48,6 @@ class UserController(Controller):
         )
 
     @patch("/{user_id:uuid}", status_code=status_codes.HTTP_200_OK)
-    @inject
     async def update_user_endpoint(
         self,
         user_id: uuid.UUID,
@@ -63,7 +59,6 @@ class UserController(Controller):
         )
 
     @get(status_code=status_codes.HTTP_200_OK)
-    @inject
     async def select_users_endpoint(
         self,
         s: Annotated[
