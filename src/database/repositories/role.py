@@ -19,10 +19,6 @@ from src.database.types import OrderBy
 class RoleRepository(BaseRepository[models.Role]):
     __slots__ = ()
 
-    @property
-    def model(self) -> type[models.Role]:
-        return models.Role
-
     async def create(self, **data: Unpack[CreateRoleType]) -> Optional[models.Role]:
         return await self._crud.insert(**data)
 
