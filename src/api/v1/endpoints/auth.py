@@ -6,7 +6,7 @@ from src.api.common.interfaces.mediator import Mediator
 from src.api.v1 import handlers
 from src.common import dtos
 from src.common.di import Depends
-from src.core.settings import Settings
+from src.settings.core import Settings
 
 
 class AuthController(Controller):

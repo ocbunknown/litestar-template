@@ -2,8 +2,8 @@ from dataclasses import dataclass, field
 from typing import Any, Callable
 
 from src.common.tools.singleton import lazy_single
-from src.core.settings import Settings
 from src.database import DBGateway
+from src.settings.core import Settings
 
 from .external import ExternalServiceGateway
 from .internal import InternalServiceGateway

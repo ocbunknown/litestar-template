@@ -1,6 +1,6 @@
 import logging
 
-from src.core.settings import (
+from src.settings.core import (
     DATETIME_FORMAT,
     LOG_LEVEL,
     LOGGING_FORMAT,

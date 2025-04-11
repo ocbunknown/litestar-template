@@ -10,7 +10,7 @@ from argon2.profiles import (
     RFC_9106_LOW_MEMORY,
 )
 
-from src.common.interfaces.hasher import AbstractHasher
+from src.services.interfaces.hasher import AbstractHasher
 
 ProfileType = Literal[
     "RFC_9106_LOW_MEMORY", "RFC_9106_HIGH_MEMORY", "CHEAPEST", "PRE_21_2", "DEFAULT"

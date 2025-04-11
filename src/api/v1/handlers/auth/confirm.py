@@ -4,10 +4,10 @@ from src.api.common.interfaces.handler import Handler
 from src.common import dtos
 from src.common.dtos.base import DTO
 from src.common.exceptions import NotFoundError
-from src.common.interfaces.hasher import AbstractHasher
 from src.common.tools.cache import default_key_builder
 from src.services import InternalServiceGateway
 from src.services.cache.redis import RedisCache
+from src.services.interfaces.hasher import AbstractHasher
 
 
 class ConfirmRegisterQuery(DTO):

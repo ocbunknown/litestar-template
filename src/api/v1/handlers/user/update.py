@@ -4,8 +4,8 @@ import uuid_utils.compat as uuid
 
 from src.api.common.interfaces.handler import Handler
 from src.common import dtos
-from src.common.interfaces.hasher import AbstractHasher
 from src.services import InternalServiceGateway
+from src.services.interfaces.hasher import AbstractHasher
 
 
 class UpdateUserQuery(dtos.DTO):

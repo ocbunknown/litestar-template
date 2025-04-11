@@ -10,8 +10,8 @@ from typing import (
 import jwt
 
 from src.common.dtos.token import Token
-from src.common.exceptions import ServiceNotImplementedError, UnAuthorizedError
-from src.core.settings import CipherSettings
+from src.common.exceptions import ConflictError, UnAuthorizedError
+from src.settings.core import CipherSettings
 
 TokenType = Literal["access", "refresh"]
 
@@ -41,7 +41,7 @@ class JWT:
             expire = now + timedelta(seconds=seconds_delta)
 
         if now >= expire:
-            raise ServiceNotImplementedError("Invalid expiration delta was provided")
+            raise ConflictError("Invalid expiration delta was provided")
 
         to_encode = {
             "exp": expire,

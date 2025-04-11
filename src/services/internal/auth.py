@@ -6,8 +6,8 @@ from litestar.concurrency import sync_to_thread
 from src.common import dtos
 from src.common.di import Depends, FromDepends, inject
 from src.common.exceptions import ForbiddenError
-from src.common.security.jwt import JWT
 from src.services.cache.redis import RedisCache
+from src.services.security.jwt import JWT
 
 DEFAULT_TOKENS_COUNT: Final[int] = 5
 

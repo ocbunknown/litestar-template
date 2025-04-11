@@ -1,8 +1,8 @@
 from typing import Any, Callable
 
-from src.common.interfaces.gateway import BaseGateway
-from src.core.settings import Settings
+from src.services.interfaces.gateway import BaseGateway
 from src.services.provider.base import AsyncProvider
+from src.settings.core import Settings
 
 
 class ExternalServiceGateway(BaseGateway):

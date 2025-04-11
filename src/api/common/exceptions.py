@@ -9,7 +9,7 @@ from litestar.types import ExceptionHandlersMap
 from uuid_utils.compat import uuid4
 
 import src.common.exceptions as exc
-from src.core.logger import log
+from src.common.logger import log
 
 JsonResponse = Response[dict[str, Any]]
 type BasicRequest = Request[Any, Any, Any]

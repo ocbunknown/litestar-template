@@ -1,6 +1,6 @@
 from nats.aio.client import Client as NatsClient
 from src.api.common.broker.nats.core import NatsBroker
-from src.core.settings import Settings
+from src.settings.core import Settings
 
 
 async def create_nats_connection(broker: NatsBroker, settings: Settings) -> NatsClient:

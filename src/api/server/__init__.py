@@ -1,6 +1,6 @@
 from typing import Any
 
-from src.core.settings import Settings
+from src.settings.core import Settings
 
 from .granian import run_api_granian
 

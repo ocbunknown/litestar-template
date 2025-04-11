@@ -3,7 +3,7 @@ from typing import Any
 
 import redis.asyncio as aioredis
 
-from src.core.settings import RedisSettings
+from src.settings.core import RedisSettings
 
 
 class RedisCache:

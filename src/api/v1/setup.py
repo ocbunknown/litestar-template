@@ -5,7 +5,7 @@ from src.api.v1.di import setup_dependencies
 from src.api.v1.endpoints import setup_controllers
 from src.api.v1.integration.dishka import DishkaRouter
 from src.api.v1.middlewares import setup_middlewares
-from src.core.settings import Settings
+from src.settings.core import Settings
 
 
 def init_v1_router(
