@@ -1,5 +1,6 @@
 from typing import Any, Callable
 
+import src.database.models as models
 from src.database.connection import SessionFactoryType
 from src.database.manager import TransactionManager
 from src.database.repositories.role import RoleRepository
@@ -17,11 +18,11 @@ class DBGateway(BaseGateway):
 
     @property
     def user(self) -> UserRepository:
-        return self._from_cache("user", UserRepository)
+        return self._from_cache("user", UserRepository, model=models.User)
 
     @property
     def role(self) -> RoleRepository:
-        return self._from_cache("role", RoleRepository)
+        return self._from_cache("role", RoleRepository, model=models.Role)
 
     def _from_cache[S](self, key: str, factory: Callable[..., S], **kwargs: Any) -> S:
         if not (cached := self._cache.get(key)):
