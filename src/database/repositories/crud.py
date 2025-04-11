@@ -21,7 +21,7 @@ from sqlalchemy import (
 from sqlalchemy.dialects.postgresql import insert as postgres_insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.common.interfaces.crud import AbstractCRUDRepository
+from src.database.interfaces.crud import AbstractCRUDRepository
 from src.database.models.base import Base
 
 

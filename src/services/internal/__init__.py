@@ -1,7 +1,7 @@
 from typing import Any, Callable
 
-from src.common.interfaces.gateway import BaseGateway
 from src.database import DBGateway
+from src.services.interfaces.gateway import BaseGateway
 
 from .auth import AuthService
 from .role import RoleService

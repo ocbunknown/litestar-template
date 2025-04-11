@@ -20,7 +20,7 @@ from src.api.common.exceptions import setup_exception_handlers
 from src.api.common.middlewares import setup_middlewares
 from src.api.common.tools import ClosableProxy, RouterState
 from src.common.di import container
-from src.core.settings import Settings
+from src.settings.core import Settings
 
 
 @asynccontextmanager

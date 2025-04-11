@@ -6,9 +6,9 @@ from nats.js.api import StreamConfig
 from nats.js.errors import NotFoundError
 from src.api.common.broker.nats.core import NatsJetStreamBroker
 from src.common.di import Depends, FromDepends, inject
+from src.common.logger import log
 from src.common.tools.files import open_file_sync
-from src.core.logger import log
-from src.core.settings import path
+from src.settings.core import path
 
 
 def load_stream_config() -> list[dict[str, Any]]:

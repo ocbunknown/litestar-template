@@ -12,8 +12,8 @@ from src.api.v1.constants import (
 )
 from src.api.v1.tools.validate import validate_email
 from src.common import dtos
-from src.common.interfaces.hasher import AbstractHasher
 from src.services import InternalServiceGateway
+from src.services.interfaces.hasher import AbstractHasher
 
 
 class CreateUserQuery(dtos.DTO):

@@ -3,9 +3,9 @@ from typing import Any
 from granian.constants import Interfaces
 from granian.server import Server as Granian
 
-from src.core.logger import log
-from src.core.settings import ServerSettings
-from src.core.utils import workers_count
+from src.api.server.utils import workers_count
+from src.common.logger import log
+from src.settings.core import ServerSettings
 
 
 def run_api_granian(

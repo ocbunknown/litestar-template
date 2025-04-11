@@ -17,8 +17,8 @@ from src.common.exceptions import (
     NotFoundError,
     UnAuthorizedError,
 )
-from src.common.interfaces.hasher import AbstractHasher
 from src.services import InternalServiceGateway
+from src.services.interfaces.hasher import AbstractHasher
 
 
 class LoginQuery(DTO):

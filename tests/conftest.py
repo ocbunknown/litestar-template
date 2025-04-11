@@ -17,9 +17,13 @@ from testcontainers.redis import RedisContainer  # type: ignore
 
 from src.api.setup import init_app
 from src.api.v1.setup import init_v1_router
-from src.common.interfaces.hasher import AbstractHasher
-from src.common.security.argon2 import get_argon2_hasher
-from src.core.settings import (
+from src.database import DBGateway, create_database_factory
+from src.database.connection import create_sa_engine, create_sa_session_factory
+from src.database.manager import TransactionManager
+from src.services.cache.redis import RedisCache, get_redis
+from src.services.interfaces.hasher import AbstractHasher
+from src.services.security.argon2 import get_argon2_hasher
+from src.settings.core import (
     DatabaseSettings,
     NatsSettings,
     RedisSettings,
@@ -27,10 +31,6 @@ from src.core.settings import (
     load_settings,
     path,
 )
-from src.database import DBGateway, create_database_factory
-from src.database.core.connection import create_sa_engine, create_sa_session_factory
-from src.database.core.manager import TransactionManager
-from src.services.cache.redis import RedisCache, get_redis
 
 pytestmark = pytest.mark.anyio
 

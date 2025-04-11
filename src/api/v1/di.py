@@ -11,21 +11,21 @@ from src.api.common.interfaces.mediator import Mediator
 from src.api.common.mediator import MediatorImpl
 from src.api.v1.handlers import setup_handlers
 from src.common.di import container
-from src.common.interfaces.hasher import AbstractHasher
-from src.common.security.argon2 import get_argon2_hasher
-from src.common.security.jwt import JWT
 from src.common.serializers.msgspec import msgspec_decoder, msgspec_encoder
 from src.common.tools.singleton import singleton
-from src.core.settings import Settings
 from src.database import create_database_factory
-from src.database.core.connection import create_sa_engine, create_sa_session_factory
-from src.database.core.manager import TransactionManager
+from src.database.connection import create_sa_engine, create_sa_session_factory
+from src.database.manager import TransactionManager
 from src.services import ServiceFactory
 from src.services.cache.redis import RedisCache, get_redis
 from src.services.external import ExternalServiceGateway
+from src.services.interfaces.hasher import AbstractHasher
 from src.services.internal import InternalServiceGateway
 from src.services.provider.aiohttp import AiohttpProvider
 from src.services.provider.base import AsyncProvider
+from src.services.security.argon2 import get_argon2_hasher
+from src.services.security.jwt import JWT
+from src.settings.core import Settings
 
 
 def setup_dependencies(settings: Settings) -> State:
