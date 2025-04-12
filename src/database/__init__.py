@@ -1,11 +1,11 @@
 from typing import Any, Callable
 
-import src.database.models as models
+from src.database import models
 from src.database.connection import SessionFactoryType
+from src.database.interfaces.gateway import BaseGateway
 from src.database.manager import TransactionManager
 from src.database.repositories.role import RoleRepository
 from src.database.repositories.user import UserRepository
-from src.services.interfaces.gateway import BaseGateway
 
 
 class DBGateway(BaseGateway):

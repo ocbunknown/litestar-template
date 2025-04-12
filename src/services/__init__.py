@@ -1,8 +1,8 @@
 from dataclasses import dataclass, field
 from typing import Any, Callable
 
-from src.common.tools.singleton import lazy_single
-from src.database import DBGateway
+from src.services.cache.redis import RedisCache
+from src.services.security.jwt import JWT
 from src.settings.core import Settings
 
 from .external import ExternalServiceGateway
@@ -12,13 +12,19 @@ from .provider.base import AsyncProvider
 
 @dataclass(slots=True)
 class ServiceFactory:
-    database_factory: Callable[[], DBGateway]
     provider: AsyncProvider
     settings: Settings
+    jwt: JWT
+    redis: RedisCache
     _cache: dict[str, Any] = field(default_factory=dict)
 
-    def internal(self) -> Callable[[], InternalServiceGateway]:
-        return lazy_single(InternalServiceGateway, self.database_factory)
+    def internal(self) -> InternalServiceGateway:
+        return self._from_cache(
+            "internal",
+            InternalServiceGateway,
+            jwt=self.jwt,
+            redis=self.redis,
+        )
 
     def external(self) -> ExternalServiceGateway:
         return self._from_cache(

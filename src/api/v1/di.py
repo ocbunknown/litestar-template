@@ -9,11 +9,11 @@ from src.api.common.bus.core import EventBusImpl
 from src.api.common.interfaces.event_bus import EventBus
 from src.api.common.interfaces.mediator import Mediator
 from src.api.common.mediator import MediatorImpl
+from src.api.common.serializers.msgspec import msgspec_decoder, msgspec_encoder
 from src.api.v1.handlers import setup_handlers
 from src.common.di import container
-from src.common.serializers.msgspec import msgspec_decoder, msgspec_encoder
 from src.common.tools.singleton import singleton
-from src.database import create_database_factory
+from src.database import DBGateway, create_database_factory
 from src.database.connection import create_sa_engine, create_sa_session_factory
 from src.database.manager import TransactionManager
 from src.services import ServiceFactory
@@ -48,9 +48,10 @@ def setup_dependencies(settings: Settings) -> State:
 
     aiohttp_provider = AiohttpProvider()
     service_factory = ServiceFactory(
-        database_factory=database_factory,
         provider=aiohttp_provider,
         settings=settings,
+        jwt=jwt,
+        redis=redis,
     )
 
     nats_broker = NatsBroker(NatsClient())
@@ -71,6 +72,7 @@ def setup_dependencies(settings: Settings) -> State:
             jwt=jwt,
             settings=settings,
             event_bus=event_bus,
+            database=database_factory(),
             external_gateway=service_factory.external(),
             internal_gateway=service_factory.internal(),
         )
@@ -89,10 +91,9 @@ def setup_dependencies(settings: Settings) -> State:
     provider.provide(singleton(aiohttp_provider), provides=AsyncProvider)
     provider.provide(singleton(jwt), provides=JWT)
     provider.provide(singleton(hasher), provides=AbstractHasher)
+    provider.provide(database_factory, provides=DBGateway, scope=Scope.REQUEST)
     provider.provide(
-        service_factory.internal(),
-        provides=InternalServiceGateway,
-        scope=Scope.REQUEST,
+        singleton(service_factory.internal()), provides=InternalServiceGateway
     )
     provider.provide(service_factory.external, provides=ExternalServiceGateway)
 

@@ -5,8 +5,8 @@ from typing import Any
 import msgspec
 from uuid_utils.compat import UUID, uuid4
 
-from src.common.converters import convert_from
-from src.common.serializers.msgspec import msgpack_encoder
+from src.api.common.converters import convert_from
+from src.api.common.serializers.msgspec import msgpack_encoder
 
 
 class Event(msgspec.Struct, kw_only=True):

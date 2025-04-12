@@ -12,8 +12,7 @@ from litestar.middleware.rate_limit import RateLimitConfig
 from litestar.params import Parameter
 
 from src.api.common.interfaces.mediator import Mediator
-from src.api.v1 import handlers
-from src.common import dtos
+from src.api.v1 import dtos, handlers
 from src.common.di import Depends
 from src.database.repositories.types.user import UserLoads
 

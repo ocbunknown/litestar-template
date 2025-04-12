@@ -2,7 +2,7 @@ from litestar.connection import ASGIConnection
 from litestar.datastructures.state import State
 from litestar.handlers.base import BaseRouteHandler
 
-from src.common import dtos
+from src.api.v1 import dtos
 from src.common.exceptions import UnAuthorizedError
 from src.database.models.types import Roles
 

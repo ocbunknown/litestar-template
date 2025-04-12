@@ -9,16 +9,16 @@ from src.api.v1.constants import (
     MAX_PASSWORD_LENGTH,
     MIN_PASSWORD_LENGTH,
 )
+from src.api.v1.dtos.base import DTO
 from src.api.v1.tools.validate import validate_email
-from src.common import dtos
-from src.common.dtos.base import DTO
 from src.common.exceptions import (
     ForbiddenError,
-    NotFoundError,
     UnAuthorizedError,
 )
+from src.database import DBGateway
 from src.services import InternalServiceGateway
 from src.services.interfaces.hasher import AbstractHasher
+from src.services.internal.auth import TokensExpire
 
 
 class LoginQuery(DTO):
@@ -47,16 +47,15 @@ class LoginQuery(DTO):
 
 
 @dataclass(slots=True)
-class LoginHandler(Handler[LoginQuery, dtos.TokensExpire]):
+class LoginHandler(Handler[LoginQuery, TokensExpire]):
     internal_gateway: InternalServiceGateway
+    database: DBGateway
     hasher: AbstractHasher
 
-    async def __call__(self, query: LoginQuery) -> dtos.TokensExpire:
-        async with self.internal_gateway.database.manager.session:
-            user = await self.internal_gateway.database.user.select(login=query.login)
+    async def __call__(self, query: LoginQuery) -> TokensExpire:
+        async with self.database.manager.session:
+            user = (await self.database.user.select(login=query.login)).result()
 
-        if not user:
-            raise NotFoundError("User not found")
         if not user.active:
             raise ForbiddenError("You have been blocked")
         if not self.hasher.verify_password(user.password, query.password):

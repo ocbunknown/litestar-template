@@ -1,6 +1,4 @@
-from __future__ import annotations
-
-from src.common.dtos.base import DTO
+from src.api.v1.dtos.base import DTO
 
 
 class Fingerprint(DTO):

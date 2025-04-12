@@ -1,6 +1,6 @@
 from typing import Protocol, runtime_checkable
 
-from src.common.interfaces.dto import DTO
+from src.api.common.interfaces.dto import DTO
 
 
 @runtime_checkable

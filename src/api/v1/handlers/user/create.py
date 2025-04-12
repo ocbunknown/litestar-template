@@ -5,14 +5,14 @@ import uuid_utils.compat as uuid
 from msgspec import Meta
 
 from src.api.common.interfaces.handler import Handler
+from src.api.v1 import dtos
 from src.api.v1.constants import (
     MAX_LOGIN_LENGTH,
     MAX_PASSWORD_LENGTH,
     MIN_PASSWORD_LENGTH,
 )
 from src.api.v1.tools.validate import validate_email
-from src.common import dtos
-from src.services import InternalServiceGateway
+from src.database import DBGateway
 from src.services.interfaces.hasher import AbstractHasher
 
 
@@ -43,13 +43,15 @@ class CreateUserQuery(dtos.DTO):
 
 @dataclass(slots=True)
 class CreateUserHandler(Handler[CreateUserQuery, dtos.User]):
-    internal_gateway: InternalServiceGateway
+    database: DBGateway
     hasher: AbstractHasher
 
     async def __call__(self, query: CreateUserQuery) -> dtos.User:
-        async with self.internal_gateway:
-            return await self.internal_gateway.user.create(
+        async with self.database:
+            user = await self.database.user.create(
                 login=query.login,
                 password=self.hasher.hash_password(query.password),
                 role_uuid=query.role_uuid,
             )
+
+            return dtos.User.from_mapping(user.result().as_dict())

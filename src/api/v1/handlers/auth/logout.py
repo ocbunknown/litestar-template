@@ -3,8 +3,8 @@ from dataclasses import dataclass
 import uuid_utils.compat as uuid
 
 from src.api.common.interfaces.handler import Handler
-from src.common import dtos
-from src.common.dtos.base import DTO
+from src.api.v1 import dtos
+from src.api.v1.dtos.base import DTO
 from src.common.exceptions import UnAuthorizedError
 from src.services import InternalServiceGateway
 
@@ -22,6 +22,7 @@ class LogoutHandler(Handler[LogoutQuery, dtos.Status]):
         if not (refresh_token := query.refresh_token):
             raise UnAuthorizedError("Not allowed")
 
-        return await self.internal_gateway.auth.invalidate_refresh(
+        result = await self.internal_gateway.auth.invalidate_refresh(
             refresh_token, query.user_uuid
         )
+        return dtos.Status(status=result)

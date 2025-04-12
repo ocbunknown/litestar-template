@@ -1,10 +1,10 @@
 import abc
 from typing import Any
 
-from src.common.interfaces.dto import DTO
+from src.api.common.interfaces.dto import DTO
 
 
-class Handler[Q: DTO, R: DTO](abc.ABC):
+class Handler[Q: DTO, R](abc.ABC):
     __slots__ = ()
 
     @abc.abstractmethod

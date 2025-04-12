@@ -3,9 +3,9 @@ from litestar.datastructures import Cookie, State
 from litestar.middleware.rate_limit import RateLimitConfig
 
 from src.api.common.interfaces.mediator import Mediator
-from src.api.v1 import handlers
-from src.common import dtos
+from src.api.v1 import dtos, handlers
 from src.common.di import Depends
+from src.services.internal.auth import Token, TokensExpire
 from src.settings.core import Settings
 
 
@@ -16,7 +16,7 @@ class AuthController(Controller):
     @post(
         "/login",
         status_code=status_codes.HTTP_200_OK,
-        exclude_auth=True,
+        exclude_from_auth=True,
         middleware=[RateLimitConfig(rate_limit=("minute", 10)).middleware],
     )
     async def login_endpoint(
@@ -24,9 +24,9 @@ class AuthController(Controller):
         data: handlers.auth.LoginQuery,
         settings: Depends[Settings],
         mediator: Depends[Mediator],
-    ) -> Response[dtos.Token]:
-        result: dtos.TokensExpire = await mediator.send(data)
-        response = Response(dtos.Token(token=result.tokens.access))
+    ) -> Response[Token]:
+        result: TokensExpire = await mediator.send(data)
+        response = Response(Token(token=result.tokens.access))
         response.set_cookie(
             Cookie(
                 key="refresh_token",
@@ -42,7 +42,7 @@ class AuthController(Controller):
     @post(
         "/register",
         status_code=status_codes.HTTP_200_OK,
-        exclude_auth=True,
+        exclude_from_auth=True,
         middleware=[RateLimitConfig(rate_limit=("minute", 5)).middleware],
     )
     async def register_endpoint(
@@ -55,7 +55,7 @@ class AuthController(Controller):
     @post(
         "/register/confirm",
         status_code=status_codes.HTTP_201_CREATED,
-        exclude_auth=True,
+        exclude_from_auth=True,
         middleware=[RateLimitConfig(rate_limit=("minute", 10)).middleware],
     )
     async def register_confirm_endpoint(
@@ -63,9 +63,9 @@ class AuthController(Controller):
         data: handlers.auth.ConfirmRegisterQuery,
         settings: Depends[Settings],
         mediator: Depends[Mediator],
-    ) -> Response[dtos.Token]:
-        result: dtos.TokensExpire = await mediator.send(data)
-        response = Response(dtos.Token(token=result.tokens.access))
+    ) -> Response[Token]:
+        result: TokensExpire = await mediator.send(data)
+        response = Response(Token(token=result.tokens.access))
         response.set_cookie(
             Cookie(
                 key="refresh_token",
@@ -81,7 +81,7 @@ class AuthController(Controller):
     @post(
         "/refresh",
         status_code=status_codes.HTTP_200_OK,
-        exclude_auth=True,
+        exclude_from_auth=True,
     )
     async def refresh_endpoint(
         self,
@@ -89,13 +89,13 @@ class AuthController(Controller):
         request: Request[None, None, State],
         settings: Depends[Settings],
         mediator: Depends[Mediator],
-    ) -> Response[dtos.Token]:
-        result: dtos.TokensExpire = await mediator.send(
+    ) -> Response[Token]:
+        result: TokensExpire = await mediator.send(
             handlers.auth.RefreshTokenQuery(
                 data=data, refresh_token=request.cookies.get("refresh_token", "")
             )
         )
-        response = Response(dtos.Token(token=result.tokens.access))
+        response = Response(Token(token=result.tokens.access))
         response.set_cookie(
             Cookie(
                 key="refresh_token",

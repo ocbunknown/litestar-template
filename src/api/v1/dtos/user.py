@@ -4,8 +4,8 @@ from msgspec import Meta
 from uuid_utils.compat import UUID
 
 from src.api.v1.constants import MAX_PASSWORD_LENGTH, MIN_PASSWORD_LENGTH
-from src.common.dtos.base import DTO
-from src.common.dtos.role import Role
+from src.api.v1.dtos.base import DTO
+from src.api.v1.dtos.role import Role
 
 
 class User(DTO):

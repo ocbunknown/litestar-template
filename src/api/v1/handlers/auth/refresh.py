@@ -1,10 +1,11 @@
 from dataclasses import dataclass
 
 from src.api.common.interfaces.handler import Handler
-from src.common import dtos
-from src.common.dtos.base import DTO
+from src.api.v1 import dtos
+from src.api.v1.dtos.base import DTO
 from src.common.exceptions import UnAuthorizedError
 from src.services import InternalServiceGateway
+from src.services.internal.auth import TokensExpire
 
 
 class RefreshTokenQuery(DTO):
@@ -13,13 +14,13 @@ class RefreshTokenQuery(DTO):
 
 
 @dataclass(slots=True)
-class RefreshTokenHandler(Handler[RefreshTokenQuery, dtos.TokensExpire]):
+class RefreshTokenHandler(Handler[RefreshTokenQuery, TokensExpire]):
     internal_gateway: InternalServiceGateway
 
-    async def __call__(self, query: RefreshTokenQuery) -> dtos.TokensExpire:
+    async def __call__(self, query: RefreshTokenQuery) -> TokensExpire:
         if not (refresh_token := query.refresh_token):
             raise UnAuthorizedError("Not allowed")
 
         return await self.internal_gateway.auth.verify_refresh(
-            query.data, refresh_token
+            query.data.fingerprint, refresh_token
         )
