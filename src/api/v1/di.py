@@ -72,7 +72,7 @@ def setup_dependencies(settings: Settings) -> State:
             jwt=jwt,
             settings=settings,
             event_bus=event_bus,
-            database=database_factory(),
+            database=database_factory,
             external_gateway=service_factory.external(),
             internal_gateway=service_factory.internal(),
         )
