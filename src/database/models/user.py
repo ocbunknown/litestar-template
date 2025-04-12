@@ -14,7 +14,9 @@ if TYPE_CHECKING:
 
 
 class User(mixins.UUIDMixin, mixins.TimeMixin, Base):
-    login: orm.Mapped[str] = orm.mapped_column(sa.String, index=True, nullable=False)
+    login: orm.Mapped[str] = orm.mapped_column(
+        sa.String, index=True, unique=True, nullable=False
+    )
     password: orm.Mapped[str] = orm.mapped_column(sa.String, nullable=False)
     active: orm.Mapped[bool] = orm.mapped_column(
         sa.Boolean, default=True, index=True, nullable=False

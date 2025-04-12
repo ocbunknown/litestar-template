@@ -7,23 +7,25 @@ from msgspec import Meta
 
 from src.api.common.interfaces.event_bus import EventBus
 from src.api.common.interfaces.handler import Handler
+from src.api.v1 import dtos
 from src.api.v1.constants import (
     MAX_LOGIN_LENGTH,
     MAX_PASSWORD_LENGTH,
     MIN_PASSWORD_LENGTH,
 )
+from src.api.v1.dtos.base import DTO
 from src.api.v1.events.email import SendEmail
 from src.api.v1.tools.validate import validate_email
-from src.common import dtos
 from src.common.exceptions import (
     ConflictError,
 )
 from src.common.tools.cache import default_key_builder
+from src.database import DBGateway
 from src.services import InternalServiceGateway
 from src.services.cache.redis import RedisCache
 
 
-class RegisterQuery(dtos.DTO):
+class RegisterQuery(DTO):
     login: Annotated[
         str,
         Meta(
@@ -51,14 +53,15 @@ class RegisterQuery(dtos.DTO):
 @dataclass(slots=True)
 class RegisterHandler(Handler[RegisterQuery, dtos.Status]):
     internal_gateway: InternalServiceGateway
+    database: DBGateway
     event_bus: EventBus
     redis: RedisCache
 
     async def __call__(self, query: RegisterQuery) -> dtos.Status:
-        async with self.internal_gateway.database.manager.session:
-            user_exists = await self.internal_gateway.user.exists(login=query.login)
+        async with self.database.manager.session:
+            user = (await self.database.user.exists(login=query.login)).result()
 
-        if user_exists:
+        if user:
             raise ConflictError("User already exists")
 
         code = secrets.token_hex(16)

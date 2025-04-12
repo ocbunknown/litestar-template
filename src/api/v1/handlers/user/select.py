@@ -3,12 +3,13 @@ from dataclasses import dataclass
 import uuid_utils.compat as uuid
 
 from src.api.common.interfaces.handler import Handler
-from src.common import dtos
+from src.api.v1 import dtos
+from src.api.v1.dtos.base import DTO
+from src.database import DBGateway
 from src.database.repositories.types.user import UserLoads
-from src.services import InternalServiceGateway
 
 
-class SelectUserQuery(dtos.DTO):
+class SelectUserQuery(DTO):
     loads: tuple[UserLoads, ...]
     user_uuid: uuid.UUID | None = None
     login: str | None = None
@@ -16,12 +17,14 @@ class SelectUserQuery(dtos.DTO):
 
 @dataclass(slots=True)
 class SelectUserHandler(Handler[SelectUserQuery, dtos.User]):
-    internal_gateway: InternalServiceGateway
+    database: DBGateway
 
     async def __call__(self, query: SelectUserQuery) -> dtos.User:
-        async with self.internal_gateway.database.manager.session:
-            return await self.internal_gateway.user.select(
+        async with self.database.manager.session:
+            user = await self.database.user.select(
                 *query.loads,
                 user_uuid=query.user_uuid,
                 login=query.login,
             )
+
+            return dtos.User.from_mapping(user.result().as_dict())

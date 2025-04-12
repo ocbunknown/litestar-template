@@ -1,15 +1,13 @@
 from typing import Any, Callable
 
-from src.services.interfaces.gateway import BaseGateway
 from src.services.provider.base import AsyncProvider
 from src.settings.core import Settings
 
 
-class ExternalServiceGateway(BaseGateway):
+class ExternalServiceGateway:
     __slots__ = ("provider", "settings", "_cache")
 
     def __init__(self, provider: AsyncProvider, settings: Settings) -> None:
-        super().__init__(provider)
         self.provider = provider
         self.settings = settings
         self._cache: dict[str, Any] = {}

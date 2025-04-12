@@ -9,7 +9,6 @@ from typing import (
 
 import jwt
 
-from src.common.dtos.token import Token
 from src.common.exceptions import ConflictError, UnAuthorizedError
 from src.settings.core import CipherSettings
 
@@ -28,7 +27,7 @@ class JWT:
         sub: str,
         expires_delta: Optional[timedelta] = None,
         **kw: Any,
-    ) -> tuple[datetime, Token]:
+    ) -> tuple[datetime, str]:
         now = datetime.now(UTC)
         if expires_delta:
             expire = now + expires_delta
@@ -58,7 +57,7 @@ class JWT:
         except jwt.PyJWTError as e:
             raise UnAuthorizedError("Token is expired") from e
 
-        return expire, Token(token=token)
+        return expire, token
 
     def verify_token(self, token: str) -> dict[str, Any]:
         try:

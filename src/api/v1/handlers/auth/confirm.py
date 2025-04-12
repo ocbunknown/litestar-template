@@ -1,13 +1,15 @@
 from dataclasses import dataclass
 
 from src.api.common.interfaces.handler import Handler
-from src.common import dtos
-from src.common.dtos.base import DTO
+from src.api.v1 import dtos
+from src.api.v1.dtos.base import DTO
 from src.common.exceptions import NotFoundError
 from src.common.tools.cache import default_key_builder
+from src.database import DBGateway
 from src.services import InternalServiceGateway
 from src.services.cache.redis import RedisCache
 from src.services.interfaces.hasher import AbstractHasher
+from src.services.internal.auth import TokensExpire
 
 
 class ConfirmRegisterQuery(DTO):
@@ -15,12 +17,13 @@ class ConfirmRegisterQuery(DTO):
 
 
 @dataclass(slots=True)
-class ConfirmRegisterHandler(Handler[ConfirmRegisterQuery, dtos.TokensExpire]):
+class ConfirmRegisterHandler(Handler[ConfirmRegisterQuery, TokensExpire]):
     internal_gateway: InternalServiceGateway
+    database: DBGateway
     hasher: AbstractHasher
     redis: RedisCache
 
-    async def __call__(self, query: ConfirmRegisterQuery) -> dtos.TokensExpire:
+    async def __call__(self, query: ConfirmRegisterQuery) -> TokensExpire:
         key = default_key_builder(code=query.code)
 
         cached_data = await self.redis.get(key)
@@ -30,12 +33,14 @@ class ConfirmRegisterHandler(Handler[ConfirmRegisterQuery, dtos.TokensExpire]):
         await self.redis.delete(key)
         cache_user = dtos.Register.from_string(cached_data)
 
-        async with self.internal_gateway:
-            role = await self.internal_gateway.role.select(name="User")
-            user = await self.internal_gateway.user.create(
-                login=cache_user.login,
-                password=self.hasher.hash_password(cache_user.password),
-                role_uuid=role.uuid,
-            )
+        async with self.database:
+            role = (await self.database.role.select(name="User")).result()
+            user = (
+                await self.database.user.create(
+                    login=cache_user.login,
+                    password=self.hasher.hash_password(cache_user.password),
+                    role_uuid=role.uuid,
+                )
+            ).result()
 
         return await self.internal_gateway.auth.login(cache_user.fingerprint, user.uuid)

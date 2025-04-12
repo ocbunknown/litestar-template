@@ -5,10 +5,9 @@ from litestar import Controller, get, patch, post, status_codes
 from litestar.params import Parameter
 
 from src.api.common.interfaces.mediator import Mediator
-from src.api.v1 import handlers
+from src.api.v1 import dtos, handlers
 from src.api.v1.constants import MAX_PAGINATION_LIMIT, MIN_PAGINATION_LIMIT
 from src.api.v1.permission import Permission
-from src.common import dtos
 from src.common.di import Depends
 from src.database.repositories.types.user import UserLoads
 from src.database.types import OrderBy
@@ -20,7 +19,10 @@ class UserController(Controller):
     guards = [Permission("Admin")]
     security = [{"BearerToken": []}]
 
-    @post(status_code=status_codes.HTTP_201_CREATED)
+    @post(
+        status_code=status_codes.HTTP_201_CREATED,
+        exclude_from_auth=True,
+    )
     async def create_user_endpoint(
         self,
         data: handlers.user.CreateUserQuery,

@@ -5,8 +5,8 @@ from typing import Any, Self
 
 import msgspec
 
-from src.common.converters import convert_from, convert_to
-from src.common.serializers.msgspec import (
+from src.api.common.converters import convert_from, convert_to
+from src.api.common.serializers.msgspec import (
     msgpack_decoder,
     msgpack_encoder,
     msgspec_decoder,
@@ -61,12 +61,7 @@ class DTO(msgspec.Struct):
         )
 
     def copy(self, update: Mapping[str, Any] | None = None) -> Self:
-        copied = type(self)(**self.as_mapping())
-        if update:
-            for key, value in update.items():
-                setattr(copied, key, value)
-
-        return copied
+        return type(self)(**{**self.as_mapping(), **(update or {})})
 
 
 class StrictDTO(msgspec.Struct):

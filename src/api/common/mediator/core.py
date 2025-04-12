@@ -1,5 +1,6 @@
 from typing import Any, Callable, Self
 
+from src.api.common.interfaces.dto import DTO
 from src.api.common.interfaces.handler import Handler, HandlerType
 from src.api.common.mediator.utils import (
     _create_handler_factory,
@@ -7,7 +8,6 @@ from src.api.common.mediator.utils import (
     _resolve_factory,
     _retrieve_handler_params,
 )
-from src.common.interfaces.dto import DTO
 
 type HandlerLike = Callable[[], HandlerType] | HandlerType
 
