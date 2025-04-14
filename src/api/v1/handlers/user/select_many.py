@@ -27,10 +27,12 @@ class SelectManyUserHandler(Handler[SelectManyUserQuery, dtos.OffsetResult[dtos.
         self, query: SelectManyUserQuery
     ) -> dtos.OffsetResult[dtos.User]:
         async with self.database.manager.session:
-            total, users = await self.database.user.select_many(
-                *query.loads,
-                **query.as_mapping(exclude={"loads"}),
-            )
+            total, users = (
+                await self.database.user.select_many(
+                    *query.loads,
+                    **query.as_mapping(exclude={"loads"}),
+                )
+            ).result()
 
             return dtos.OffsetResult[dtos.User](
                 data=[dtos.User.from_mapping(user.as_dict()) for user in users],

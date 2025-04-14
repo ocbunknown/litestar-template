@@ -92,9 +92,7 @@ def setup_dependencies(settings: Settings) -> State:
     provider.provide(singleton(jwt), provides=JWT)
     provider.provide(singleton(hasher), provides=AbstractHasher)
     provider.provide(database_factory, provides=DBGateway, scope=Scope.REQUEST)
-    provider.provide(
-        singleton(service_factory.internal()), provides=InternalServiceGateway
-    )
+    provider.provide(service_factory.internal, provides=InternalServiceGateway)
     provider.provide(service_factory.external, provides=ExternalServiceGateway)
 
     container.add_providers(provider, LitestarProvider())
