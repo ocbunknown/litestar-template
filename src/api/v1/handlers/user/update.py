@@ -20,7 +20,7 @@ class UpdateUserHandler(Handler[UpdateUserQuery, dtos.User]):
     hasher: AbstractHasher
 
     async def __call__(self, query: UpdateUserQuery) -> dtos.User:
-        async with self.database.manager.session:
+        async with self.database:
             if query.password:
                 query.password = self.hasher.hash_password(query.password)
 

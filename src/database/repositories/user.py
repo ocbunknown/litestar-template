@@ -80,7 +80,7 @@ class UserRepository(BaseRepository[models.User]):
         order_by: OrderBy = "desc",
         offset: int = 0,
         limit: int = 10,
-    ) -> tuple[int, Sequence[models.User]]:
+    ) -> Result[tuple[int, Sequence[models.User]]]:
         where_clauses: list[ColumnExpressionArgument[bool]] = []
         order_by_clauses: list[UnaryExpression[Any]] = []
 
@@ -93,7 +93,7 @@ class UserRepository(BaseRepository[models.User]):
 
         total = await self._crud.count(*where_clauses)
         if total <= 0:
-            return total, []
+            return Result("select", (total, []))
 
         stmt = (
             select_with_relationships(*loads, model=self.model)
@@ -104,7 +104,7 @@ class UserRepository(BaseRepository[models.User]):
         )
 
         results = (await self._session.scalars(stmt)).unique().all()
-        return total, results
+        return Result("select", (total, results))
 
     async def exists(self, login: str) -> Result[bool]:
         return Result("exists", await self._crud.exists(self.model.login == login))
